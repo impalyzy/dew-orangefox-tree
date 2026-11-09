@@ -46,7 +46,7 @@ jobs:
           cd "$HOME/fox"
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true FOX_BUILD_DEVICE=dew LC_ALL=C
-          lunch twrp_dew-eng || lunch twrp_dew-ap2a-eng || lunch twrp_dew-ap1a-eng
+          lunch twrp_dew-ap2a-eng
           mka adbd vendorbootimage
       - name: Collect output
         if: always()
