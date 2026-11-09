@@ -20,7 +20,6 @@ TARGET_NO_RADIOIMAGE := true
 # A/B + dynamic partitions (super exists, slot _a active)
 AB_OTA_UPDATER := true
 AB_OTA_PARTITIONS += boot vendor_boot init_boot dtbo vbmeta vbmeta_system vbmeta_vendor
-PRODUCT_USE_DYNAMIC_PARTITIONS := true
 BOARD_SUPER_PARTITION_SIZE := 9663676416
 # Group name/size are a guess (super minus 4 MiB, virtual A/B style); only matters for the build system.
 BOARD_SUPER_PARTITION_GROUPS := xiaomi_dynamic_partitions
