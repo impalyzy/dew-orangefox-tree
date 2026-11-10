@@ -65,6 +65,7 @@ jobs:
           ( while true; do echo "== $(date +%T) mem/swap"; free -m | sed -n 1,3p; ps -eo pid,pcpu,pmem,etime,comm --sort=-pmem | head -4; sleep 120; done ) &
           MON=$!
           trap 'kill $MON 2>/dev/null' EXIT
+          export GOMEMLIMIT=6GiB GOGC=40
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true FOX_BUILD_DEVICE=dew LC_ALL=C
           lunch twrp_dew-ap2a-eng
