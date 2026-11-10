@@ -17,8 +17,17 @@ jobs:
           dotnet: true
           haskell: true
           docker-images: true
-          swap-storage: true
+          swap-storage: false
           large-packages: false
+      - name: Add swap (soong is memory hungry)
+        run: |
+          sudo swapoff -a || true
+          sudo fallocate -l 8G /mnt/swapfile
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h
+          df -h / /mnt
       - name: Install dependencies
         run: |
           sudo apt-get update
