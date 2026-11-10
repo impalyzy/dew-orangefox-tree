@@ -51,8 +51,12 @@ jobs:
           cp -r "$GITHUB_WORKSPACE/tree" "$HOME/fox/device/xiaomi/dew"
           rm -rf "$HOME/fox/device/xiaomi/dew/.git" "$HOME/fox/device/xiaomi/dew/.github"
       - name: Build
+        timeout-minutes: 240
         run: |
           cd "$HOME/fox"
+          ( while true; do echo "== $(date +%T) mem/swap"; free -m | sed -n 1,3p; ps -eo pid,pcpu,pmem,etime,comm --sort=-pmem | head -4; sleep 120; done ) &
+          MON=$!
+          trap 'kill $MON 2>/dev/null' EXIT
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true FOX_BUILD_DEVICE=dew LC_ALL=C
           lunch twrp_dew-ap2a-eng
