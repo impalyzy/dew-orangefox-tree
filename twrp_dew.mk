@@ -1,5 +1,6 @@
 # Redmi 15C 4G (dew) - starter tree, generated from device dumps. See README.md.
 $(call inherit-product, $(SRC_TARGET_DIR)/product/base.mk)
+$(call inherit-product, $(SRC_TARGET_DIR)/product/core_64_bit.mk)
 $(call inherit-product, $(SRC_TARGET_DIR)/product/virtual_ab_ota.mk)
 
 PRODUCT_DEVICE := dew
