@@ -38,7 +38,6 @@ BOARD_VENDOR_BOOTIMAGE_PARTITION_SIZE := 67108864
 BOARD_INIT_BOOT_IMAGE_PARTITION_SIZE := 8388608
 BOARD_DTBOIMG_PARTITION_SIZE := 8388608
 TARGET_PREBUILT_KERNEL := $(DEVICE_PATH)/prebuilt/kernel
-BOARD_PREBUILT_DTBIMAGE_DIR := $(DEVICE_PATH)/prebuilt
 
 # Kernel is Linux 6.6.118-android15-8 (GKI); modules stay in the stock vendor_boot platform fragment.
 # The repack script (tools/) reuses that fragment, so no modules are bundled here.
