@@ -26,6 +26,14 @@ jobs:
           sudo chmod 600 /mnt/swapfile
           sudo mkswap /mnt/swapfile
           sudo swapon /mnt/swapfile
+          avail=$(df --output=avail -k / | tail -1)
+          echo "root free KB: $avail"
+          if [ "$avail" -gt 40000000 ]; then
+            sudo fallocate -l 16G /swapfile
+            sudo chmod 600 /swapfile
+            sudo mkswap /swapfile
+            sudo swapon /swapfile
+          fi
           free -h
           df -h / /mnt
       - name: Install dependencies
