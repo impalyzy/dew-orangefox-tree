@@ -73,7 +73,11 @@ jobs:
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true FOX_BUILD_DEVICE=dew LC_ALL=C
           lunch twrp_dew-ap2a-eng
-          mka adbd vendorbootimage
+          if ! mka adbd vendorbootimage; then
+            echo "== first build failed; removing a conflicting root/vendor dir and retrying once"
+            rm -rf out/target/product/dew/recovery/root/vendor
+            mka adbd vendorbootimage
+          fi
       - name: Collect output
         if: always()
         run: |
