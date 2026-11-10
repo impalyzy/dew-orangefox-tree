@@ -73,16 +73,15 @@ jobs:
           source build/envsetup.sh
           export ALLOW_MISSING_DEPENDENCIES=true FOX_BUILD_DEVICE=dew LC_ALL=C
           lunch twrp_dew-ap2a-eng
-          if ! mka adbd vendorbootimage; then
-            echo "== first build failed; removing a conflicting root/vendor dir and retrying once"
-            rm -rf out/target/product/dew/recovery/root/vendor
-            mka adbd vendorbootimage
-          fi
+          FRAG=out/target/product/dew/obj/PACKAGING/vendor_ramdisk_fragments_intermediates/recovery.cpio.lz4
+          mka adbd vendorbootimage || echo "== vendorbootimage failed (expected: this tree's mkbootimg is too old); checking for the recovery ramdisk"
+          ls -lh "$FRAG"
       - name: Collect output
         if: always()
         run: |
           mkdir -p "$GITHUB_WORKSPACE/out"
           cd "$HOME/fox/out/target/product/dew" || exit 0
+          cp -v obj/PACKAGING/vendor_ramdisk_fragments_intermediates/recovery.cpio.lz4 "$GITHUB_WORKSPACE/out/" || true
           cp -v vendor_boot.img ramdisk-recovery.* "$GITHUB_WORKSPACE/out/" || true
           tar -czf "$GITHUB_WORKSPACE/out/recovery_root.tar.gz" recovery/root || true
           cp -v "$HOME/fox/out/error.log" "$GITHUB_WORKSPACE/out/" || true
