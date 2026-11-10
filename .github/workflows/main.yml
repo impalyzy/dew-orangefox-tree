@@ -43,3 +43,47 @@ jobs:
           repo --version || true
       - name: Sync OrangeFox sources
         run: |
+          git config --global user.name "builder"
+          git config --global user.email "builder@example.com"
+          git clone https://gitlab.com/OrangeFox/sync.git --depth=1 "$HOME/sync"
+          cd "$HOME/sync"
+          ok=0
+          for i in 1 2 3 4; do
+            if ./orangefox_sync.sh --branch 14.1 --path "$HOME/fox"; then ok=1; break; fi
+            echo "Sync attempt $i failed (usually a temporary server error), retrying in 60s"
+            sleep 60
+          done
+          df -h / /mnt
+          [ "$ok" = 1 ]
+      - name: Add device tree
+        run: |
+          mkdir -p "$HOME/fox/device/xiaomi"
+          cp -r "$GITHUB_WORKSPACE/tree" "$HOME/fox/device/xiaomi/dew"
+          rm -rf "$HOME/fox/device/xiaomi/dew/.git" "$HOME/fox/device/xiaomi/dew/.github"
+      - name: Build
+        timeout-minutes: 240
+        run: |
+          cd "$HOME/fox"
+          # progress monitor: prints memory + top processes every 2 minutes
+          ( while true; do echo "== $(date +%T) mem/swap"; free -m | sed -n 1,3p; df -h / /mnt | tail -2; ps -eo pid,pcpu,pmem,etime,comm --sort=-pmem | head -4; sleep 120; done ) &
+          MON=$!
+          trap 'kill $MON 2>/dev/null' EXIT
+          # keep Go (soong_build) from ballooning: collect garbage aggressively
+          export GOMEMLIMIT=6GiB GOGC=40
+          source build/envsetup.sh
+          export ALLOW_MISSING_DEPENDENCIES=true FOX_BUILD_DEVICE=dew LC_ALL=C
+          lunch twrp_dew-ap2a-eng
+          mka adbd vendorbootimage
+      - name: Collect output
+        if: always()
+        run: |
+          mkdir -p "$GITHUB_WORKSPACE/out"
+          cd "$HOME/fox/out/target/product/dew" || exit 0
+          cp -v vendor_boot.img ramdisk-recovery.* "$GITHUB_WORKSPACE/out/" || true
+          tar -czf "$GITHUB_WORKSPACE/out/recovery_root.tar.gz" recovery/root || true
+          cp -v "$HOME/fox/out/error.log" "$GITHUB_WORKSPACE/out/" || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: orangefox-dew
+          path: out/*
