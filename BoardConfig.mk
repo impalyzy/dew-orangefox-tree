@@ -68,9 +68,9 @@ TW_DEFAULT_BRIGHTNESS := 2048
 
 # Decryption: FBE aes-256-xts + metadata encryption (from fstab.mt6768).
 # Needs the vendor keymint/Trustonic pieces to actually unlock /data; expect this to need work.
-TW_INCLUDE_CRYPTO := true
-TW_INCLUDE_CRYPTO_FBE := true
-TW_INCLUDE_FBE_METADATA_DECRYPT := true
+# TW_INCLUDE_CRYPTO := true
+# TW_INCLUDE_CRYPTO_FBE := true
+# TW_INCLUDE_FBE_METADATA_DECRYPT := true
 BOARD_USES_METADATA_PARTITION := true
 
 PLATFORM_VERSION := 99.87.36
